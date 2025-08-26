@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useCallback} from 'react';
 import Button from '@enact/sandstone/Button';
 import Spinner from '@enact/sandstone/Spinner';
 import {fetchImagesPage} from '../services/images';
@@ -27,18 +27,46 @@ export default function ImageGrid(props) {
   const [cursor, setCursor] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const load = async () => {
+  const loadPage = useCallback(async (after = null, replace = false) => {
     setLoading(true);
-    const {items: page, lastDoc} = await fetchImagesPage({after: cursor});
-    setItems(prev => [...prev, ...page]);
-    setCursor(lastDoc);
-    setLoading(false);
-  };
+    try {
+      const {items: page, lastDoc} = await fetchImagesPage({after});
+      setItems(prev => replace ? page : [...prev, ...page]);
+      setCursor(lastDoc);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  const refresh = useCallback(async () => {
+    setCursor(null);
+    await loadPage(null, true);
+  }, [loadPage]);
+
+  const loadMore = useCallback(async () => {
+    if (!cursor || loading) return;
+    await loadPage(cursor, false);
+  }, [cursor, loading, loadPage]);
+
+  useEffect(() => { refresh(); }, [refresh]);
+
+  // esemény az újonnan feltöltött kép azonnali megjelenítéséhez
+  useEffect(() => {
+    const handler = (e) => {
+      const doc = e.detail;
+      setItems(prev => (prev.some(p => p.id === doc.id) ? prev : [doc, ...prev]));
+    };
+    window.addEventListener('image:uploaded', handler);
+    return () => window.removeEventListener('image:uploaded', handler);
+  }, []);
 
   return (
     <div {...props}>
+      <div style={{display:'flex', gap:12, alignItems:'center', marginBottom:12}}>
+        <Button onClick={refresh} disabled={loading}>Frissítés</Button>
+        {loading && <Spinner />}
+      </div>
+
       <div
         style={{
           display: 'grid',
@@ -48,8 +76,9 @@ export default function ImageGrid(props) {
       >
         {items.map(it => <ImageCard key={it.id} item={it} />)}
       </div>
+
       <div style={{display:'flex', justifyContent:'center', marginTop: 24}}>
-        {cursor && !loading && <Button onClick={load}>További képek</Button>}
+        {cursor && !loading && <Button onClick={loadMore}>További képek</Button>}
         {loading && <Spinner />}
       </div>
     </div>
