@@ -14,7 +14,6 @@ export async function uploadImage(file, caption = '') {
   const storagePath = `images/${user.uid}/${Date.now()}_${file.name}`;
   const storageRef = ref(storage, storagePath);
 
-  // opcionális: client-oldali méretezés itt (canvas), ha szeretnéd
   const task = uploadBytesResumable(storageRef, file, {contentType: file.type});
   await new Promise((resolve, reject) => {
     task.on('state_changed', () => {}, reject, resolve);
@@ -26,11 +25,12 @@ export async function uploadImage(file, caption = '') {
     url,
     caption,
     ownerId: user.uid,
-    createdAt: Date.now(),  // sima timestamp (ms)
-    storagePath
+    createdAt: Date.now(),
+    storagePath,
+    likesCount: 0
   });
 
-  return {id: docRef.id, url, caption};
+  return {id: docRef.id, url, caption, ownerId: user.uid, createdAt: Date.now(), storagePath, likesCount: 0};
 }
 
 export async function fetchImagesPage({after = null, pageSize = PAGE_SIZE} = {}) {
