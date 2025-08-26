@@ -1,55 +1,42 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Button from '@enact/sandstone/Button';
-import {auth} from '../services/firebase';
-import {hasUserLiked, toggleLike} from '../services/likes';
-import {addComment, subscribeComments} from '../services/comments';
+import { auth } from '../services/firebase';
+import { hasUserLiked, toggleLike } from '../services/likes';
+import CommentList from './CommentList';
 
-export default function ImageCard({item}) {
+export default function ImageCard({ item }) {
   const user = auth.currentUser;
   const uid = user?.uid || null;
 
-  // like state
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(item.likesCount || 0);
   const [busy, setBusy] = useState(false);
 
-  // comment state
-  const [comments, setComments] = useState([]);
-  const quickComments = ['Cuki!', 'Imádom!', '😍', '😺', '👍'];
-
-  // like status lekérés
   useEffect(() => {
     let alive = true;
-    async function check() {
+    (async () => {
       if (!uid) { setLiked(false); return; }
       try {
         const v = await hasUserLiked(item.id, uid);
         if (alive) setLiked(v);
-      } catch {}
-    }
-    check();
+      } catch (e) {
+        console.warn('hasUserLiked hiba', e);
+      }
+    })();
     return () => { alive = false; };
   }, [item.id, uid]);
 
-  // külső likesCount változás
   useEffect(() => {
     setCount(item.likesCount || 0);
   }, [item.likesCount]);
 
-  // kommentek streamelése
-  useEffect(() => {
-    if (!item.id) return;
-    const unsub = subscribeComments(item.id, setComments);
-    return () => unsub();
-  }, [item.id]);
-
-  // like kezelés
   const onLike = async () => {
     if (!uid || busy) return;
     setBusy(true);
     const prevLiked = liked;
     const prevCount = count;
 
+    // optimista UI
     setLiked(!prevLiked);
     setCount(prevLiked ? Math.max(prevCount - 1, 0) : prevCount + 1);
 
@@ -58,85 +45,51 @@ export default function ImageCard({item}) {
     } catch (e) {
       setLiked(prevLiked);
       setCount(prevCount);
-      console.warn('Like hiba:', e);
+      console.warn('toggleLike hiba', e);
     } finally {
       setBusy(false);
-    }
-  };
-
-  // gyors komment hozzáadása
-  const onQuickComment = async (text) => {
-    if (!uid) return;
-    try {
-      await addComment(item.id, uid, text);
-    } catch (e) {
-      console.warn('Komment hiba:', e);
     }
   };
 
   const caption = useMemo(() => item.caption || 'cica', [item.caption]);
 
   return (
-    <div
-      style={{
-        borderRadius: 16,
-        overflow: 'hidden',
-        boxShadow: '0 4px 12px rgba(0,0,0,.3)',
-        display: 'grid',
-        gridTemplateRows: 'auto auto auto auto'
-      }}
-    >
-      <img
-        src={item.url}
-        alt={caption}
-        style={{width: '100%', height: 220, objectFit: 'cover', display: 'block'}}
-      />
-
-      <div style={{padding: 12, fontSize: 18}}>{caption}</div>
-
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '8px 12px'
-      }}>
-        <Button
-          onClick={onLike}
-          selected={liked}
-          disabled={busy}
-          size="small"
-          aria-label={liked ? 'Tetszik visszavonása' : 'Tetszik'}
-        >
-          {liked ? '❤️ ' : '🤍 '}{count}
-        </Button>
+    <div style={{
+      borderRadius: 12,
+      overflow: 'hidden',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
+      background: 'linear-gradient(180deg,#0b0b0b,#020202)',
+      color: '#fff',
+      marginBottom: 20,
+      display: 'block'
+    }}>
+      <div style={{ width: '100%', height: 320, backgroundColor: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <img
+          src={item.url}
+          alt={caption}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
       </div>
 
-      {/* Kommentek megjelenítése */}
-      <div style={{padding: '8px 12px'}}>
-        <div style={{marginBottom: 8, fontSize: 14, color: '#ccc'}}>
-          Kommentek
+      <div style={{ padding: 12, fontSize: 18, color: '#fff' }}>{caption}</div>
+
+      <div style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <Button
+            onClick={onLike}
+            selected={liked}
+            disabled={busy}
+            size="small"
+            aria-label={liked ? 'Tetszik visszavonása' : 'Tetszik'}
+          >
+            {liked ? '❤️' : '🤍'} {count}
+          </Button>
         </div>
-        <div style={{display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8}}>
-          {quickComments.map((txt, i) => (
-            <Button
-              key={i}
-              size="small"
-              onClick={() => onQuickComment(txt)}
-              aria-label={`Komment: ${txt}`}
-            >
-              {txt}
-            </Button>
-          ))}
-        </div>
-        <div style={{maxHeight: 100, overflowY: 'auto', fontSize: 14}}>
-          {comments.length === 0 && <div style={{color: '#888'}}>Nincsenek kommentek</div>}
-          {comments.map(c => (
-            <div key={c.id} style={{marginBottom: 4}}>
-              <span style={{fontWeight: 'bold'}}>{c.uid.slice(0,6)}:</span> {c.text}
-            </div>
-          ))}
-        </div>
+        {/* hely a jövőbeli gomboknak (pl. megosztás) */}
       </div>
+
+      {/* Komment lista: klasszikus szövegbevitellel */}
+      <CommentList imageId={item.id} />
     </div>
   );
 }

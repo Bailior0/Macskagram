@@ -1,7 +1,7 @@
-import {useEffect, useState, useCallback} from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Button from '@enact/sandstone/Button';
 import Spinner from '@enact/sandstone/Spinner';
-import {fetchImagesPage} from '../services/images';
+import { fetchImagesPage } from '../services/images';
 import ImageCard from './ImageCard';
 
 export default function ImageGrid(props) {
@@ -12,7 +12,7 @@ export default function ImageGrid(props) {
   const loadPage = useCallback(async (after = null, replace = false) => {
     setLoading(true);
     try {
-      const {items: page, lastDoc} = await fetchImagesPage({after});
+      const { items: page, lastDoc } = await fetchImagesPage({ after });
       setItems(prev => replace ? page : [...prev, ...page]);
       setCursor(lastDoc);
     } finally {
@@ -43,23 +43,21 @@ export default function ImageGrid(props) {
   }, []);
 
   return (
-    <div {...props}>
-      <div style={{display:'flex', gap:12, alignItems:'center', marginBottom:12}}>
+    <div {...props} style={{ backgroundColor: '#000', minHeight: '100vh', paddingBottom: 48 }}>
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
         <Button onClick={refresh} disabled={loading}>Frissítés</Button>
         {loading && <Spinner />}
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-          gap: 16
-        }}
-      >
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+        gap: 20
+      }}>
         {items.map(it => <ImageCard key={it.id} item={it} />)}
       </div>
 
-      <div style={{display:'flex', justifyContent:'center', marginTop: 24}}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
         {cursor && !loading && <Button onClick={loadMore}>További képek</Button>}
         {loading && <Spinner />}
       </div>
