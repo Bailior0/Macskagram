@@ -42,6 +42,15 @@ export default function ImageGrid(props) {
     return () => window.removeEventListener('image:uploaded', handler);
   }, []);
 
+  useEffect(() => {
+    const handler = (e) => {
+      const deletedId = e.detail;
+      setItems(prev => prev.filter(p => p.id !== deletedId));
+    };
+    window.addEventListener('image:deleted', handler);
+    return () => window.removeEventListener('image:deleted', handler);
+  }, []);
+
   return (
     <div {...props} style={{ backgroundColor: '#000', minHeight: '100vh', paddingBottom: 48 }}>
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>

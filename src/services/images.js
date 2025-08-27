@@ -1,9 +1,9 @@
 import {auth, db, storage} from './firebase';
 import {
   collection, addDoc, query, orderBy, limit, startAfter,
-  getDocs
+  getDocs, deleteDoc, doc
 } from 'firebase/firestore';
-import {ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage';
+import {ref, uploadBytesResumable, getDownloadURL, deleteObject} from 'firebase/storage';
 
 const PAGE_SIZE = 12;
 
@@ -43,4 +43,17 @@ export async function fetchImagesPage({after = null, pageSize = PAGE_SIZE} = {})
   snap.forEach(d => items.push({id: d.id, ...d.data()}));
   const last = snap.docs[snap.docs.length - 1] ?? null;
   return {items, lastDoc: last};
+}
+
+export async function deleteImage(id, storagePath) {
+  const user = auth.currentUser;
+  if (!user) throw new Error('Nincs bejelentkezve.');
+  if (!id || !storagePath) throw new Error('Hiányzó paraméterek.');
+
+  // törlés Firestore-ból
+  await deleteDoc(doc(db, 'images', id));
+
+  // törlés Storage-ból
+  const storageRef = ref(storage, storagePath);
+  await deleteObject(storageRef);
 }

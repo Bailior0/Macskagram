@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Button from '@enact/sandstone/Button';
 import { auth } from '../services/firebase';
 import { hasUserLiked, toggleLike } from '../services/likes';
+import { deleteImage } from '../services/images';
 import CommentList from './CommentList';
 
 export default function ImageCard({ item }) {
@@ -51,6 +52,18 @@ export default function ImageCard({ item }) {
     }
   };
 
+  const onDelete = async () => {
+    if (!window.confirm('Biztosan törölni szeretnéd ezt a képet?')) return;
+    try {
+      await deleteImage(item.id, item.storagePath);
+      // esemény az ImageGrid felé
+      window.dispatchEvent(new CustomEvent('image:deleted', { detail: item.id }));
+    } catch (e) {
+      console.error('Törlés hiba', e);
+      alert('Nem sikerült törölni a képet.');
+    }
+  };
+
   const caption = useMemo(() => item.caption || 'cica', [item.caption]);
 
   return (
@@ -85,10 +98,18 @@ export default function ImageCard({ item }) {
             {liked ? '❤️' : '🤍'} {count}
           </Button>
         </div>
-        {/* hely a jövőbeli gomboknak (pl. megosztás) */}
+
+        {/* csak a saját képnél jelenjen meg a törlés ikon */}
+        {uid === item.ownerId && (
+          <Button
+            icon="trash"
+            onClick={onDelete}
+            size="small"
+            aria-label="Kép törlése"
+          />
+        )}
       </div>
 
-      {/* Komment lista: klasszikus szövegbevitellel */}
       <CommentList imageId={item.id} />
     </div>
   );
