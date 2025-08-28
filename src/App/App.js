@@ -23,7 +23,15 @@ if (typeof window !== 'undefined' && window.tizen) {
 const AppBase = kind({
   name: 'AppBase',
   render: (props) => (
-    <div {...props} style={{padding: 24}}>
+    <div
+      {...props}
+      style={{
+        padding: 24,
+        /* háttér a téma változóból, hogy tényleg váltson */
+        background: 'var(--bg-color)',
+        minHeight: '100vh'
+      }}
+    >
       <HeaderBar />
 
       <AuthGate>
@@ -34,7 +42,7 @@ const AppBase = kind({
       </AuthGate>
 
       <footer style={{marginTop: 32, opacity: 0.7}}>
-        <Button size="small">Rólunk</Button>
+        <Button size="small" className="themed-button">Rólunk</Button>
       </footer>
     </div>
   )

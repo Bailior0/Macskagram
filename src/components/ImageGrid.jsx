@@ -32,7 +32,6 @@ export default function ImageGrid(props) {
 
   useEffect(() => { refresh(); }, [refresh]);
 
-  // újonnan feltöltött kép azonnali megjelenítése
   useEffect(() => {
     const handler = (e) => {
       const doc = e.detail;
@@ -52,9 +51,16 @@ export default function ImageGrid(props) {
   }, []);
 
   return (
-    <div {...props} style={{ backgroundColor: '#000', minHeight: '100vh', paddingBottom: 48 }}>
+    <div
+      {...props}
+      style={{
+        backgroundColor: 'var(--bg-color)',
+        minHeight: '100vh',
+        paddingBottom: 48
+      }}
+    >
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
-        <Button onClick={refresh} disabled={loading}>Frissítés</Button>
+        <Button onClick={refresh} disabled={loading} className="themed-button">Frissítés</Button>
         {loading && <Spinner />}
       </div>
 
@@ -67,7 +73,7 @@ export default function ImageGrid(props) {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
-        {cursor && !loading && <Button onClick={loadMore}>További képek</Button>}
+        {cursor && !loading && <Button onClick={loadMore} className="themed-button">További képek</Button>}
         {loading && <Spinner />}
       </div>
     </div>

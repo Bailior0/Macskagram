@@ -1,22 +1,98 @@
-html, body, #root {
+:root { 
+  
+  --text-color: #fff;
+  --header-bg: #111;
+  --header-text: #fff;
+  --accent-color: #ff6f61;
+}
+
+.light-theme {
+  --bg-color: #fafafa;
+  --text-color: #222;
+  --header-bg: #fff;
+  --header-text: #222;
+  --accent-color: #0078d7; /* világos módban kék */
+}
+
+.dark-theme {
+  --bg-color: #000;
+  --text-color: #fff;
+  --header-bg: #111;
+  --header-text: #fff;
+  --accent-color: #6f6f6f; /* sötét módban SZÜRKE (nem piros) */
+}
+
+html, body, #root,
+.enact-sandstone-Application,
+.enact-sandstone-Panel,
+.enact-sandstone-Panels,
+.enact-sandstone-Scroller,
+.enact-sandstone-Panel .panel,
+.enact-sandstone-PanelManager {
   margin: 0;
   padding: 0;
   height: 100%;
-  background: #000; /* mindenhol fekete háttér */
-  color: #fff;
+  min-height: 100vh;
+  background-color: var(--bg-color) !important;  /* görgetés alatt is egységes háttér */
+  color: var(--text-color) !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-* {
-  box-sizing: border-box;
+* { box-sizing: border-box; }
+
+/* --- SZÖVEGEK: a plain h1–h6 is váltson (AuthForm h2: "Bejelentkezés") --- */
+h1, h2, h3, h4, h5, h6,
+p, label {
+  color: var(--text-color) !important;
 }
 
-/* scrollbars (opcionális, csak böngészőn) */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+/* Sandstone komponensek szövegei is vegyék át a témaszínt */
+.enact-sandstone-BodyText,
+.enact-sandstone-Heading,
+.enact-sandstone-Button .ButtonText,
+.enact-sandstone-Input input,
+.enact-sandstone-Input .inputField,
+.enact-sandstone-Dialog,
+.enact-sandstone-Label,
+.enact-sandstone-Item {
+  color: var(--text-color) !important;
 }
+
+/* --- GOMBOK: tematizált háttér + kisebb méret --- */
+.themed-button,
+.themed-button::before,
+.themed-button:focus,
+.themed-button:active,
+.themed-button:pressed {
+  background-color: var(--accent-color) !important; /* light: kék, dark: szürke */
+  color: #fff !important;
+  border-radius: 10px !important;
+
+  /* méret finomhangolás - kisebb, mint az előző nagy méret */
+  padding: 0.4em 0.9em !important;
+  font-size: 0.95rem !important;
+  line-height: 1.2 !important;
+}
+
+.themed-button .ButtonText {
+  color: #fff !important;
+  font-size: inherit !important; /* igazodjon a fenti 0.95rem-hez */
+}
+
+.themed-button:active {
+  transform: scale(0.98);
+}
+
+.themed-button:disabled {
+  opacity: 0.6 !important;
+  background-color: #9e9e9e !important;
+  color: #fff !important;
+}
+
+/* Scrollbar (opcionális) */
+::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.08);
+  background: rgba(128,128,128,0.3);
   border-radius: 6px;
 }

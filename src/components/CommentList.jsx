@@ -13,7 +13,6 @@ export default function CommentList({imageId}) {
   const [showAll, setShowAll] = useState(false);
   const user = auth.currentUser;
 
-  // kommentek betöltése real-time streammel
   useEffect(() => {
     if (!imageId) return;
     setLoading(true);
@@ -24,7 +23,6 @@ export default function CommentList({imageId}) {
     return () => unsub();
   }, [imageId]);
 
-  // új komment beküldése
   const onSubmit = async () => {
     if (!text.trim() || !user) return;
     try {
@@ -36,19 +34,30 @@ export default function CommentList({imageId}) {
     }
   };
 
-  // ha túl sok komment van, vágjuk le
-  const visibleComments = showAll ? comments : comments.slice(-3); 
+  const visibleComments = showAll ? comments : comments.slice(-3);
   const extraCount = comments.length > 3 ? comments.length - 3 : 0;
 
   return (
-    <div style={{marginTop: 12, padding: 8, borderTop: '1px solid rgba(255,255,255,.2)'}}>
+    <div style={{
+      marginTop: 12,
+      padding: 8,
+      borderTop: '1px solid rgba(255,255,255,.2)'
+    }}>
       <h4 style={{margin: '4px 0'}}>Kommentek</h4>
 
       {loading ? <Spinner /> : (
         <div style={{display:'grid', gap: 6, marginBottom: 12}}>
           {comments.length === 0 && <div style={{opacity:0.7}}>Még nincs komment</div>}
           {visibleComments.map(c => (
-            <div key={c.id} style={{background:'rgba(255,255,255,.05)', padding:6, borderRadius:8}}>
+            <div
+              key={c.id}
+              style={{
+                background:'rgba(255,255,255,.05)',
+                padding:6,
+                borderRadius:8,
+                color:'var(--text-color)'
+              }}
+            >
               <strong style={{fontSize:13, marginRight:6}}>
                 {c.uid?.slice(0,6) || 'Anon'}:
               </strong>
@@ -56,23 +65,22 @@ export default function CommentList({imageId}) {
             </div>
           ))}
 
-          {/* ha van több komment, mutatunk egy "megnézés" gombot */}
           {!showAll && extraCount > 0 && (
-            <Button 
-              size="small" 
-              onClick={() => setShowAll(true)} 
+            <Button
+              size="small"
+              onClick={() => setShowAll(true)}
               style={{marginTop:4, fontSize:13}}
+              className="themed-button"
             >
               +{extraCount} további komment megtekintése
             </Button>
           )}
-
-          {/* ha teljes nézetben vagyunk */}
           {showAll && comments.length > 3 && (
-            <Button 
-              size="small" 
-              onClick={() => setShowAll(false)} 
+            <Button
+              size="small"
+              onClick={() => setShowAll(false)}
               style={{marginTop:4, fontSize:13}}
+              className="themed-button"
             >
               Kevesebb megjelenítése
             </Button>
@@ -91,6 +99,7 @@ export default function CommentList({imageId}) {
           onClick={onSubmit}
           disabled={busy || !text.trim()}
           style={{minWidth:120}}
+          className="themed-button"
         >
           Küldés
         </Button>

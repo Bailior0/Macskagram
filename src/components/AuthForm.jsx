@@ -56,13 +56,20 @@ export default function AuthForm() {
       <Input placeholder="Email" type="email" value={email} onChange={({value}) => setEmail(value)} />
       <Input placeholder="Jelszó" type="password" value={password} onChange={({value}) => setPassword(value)} />
       <div style={{display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap'}}>
-        <Button onClick={submit} disabled={busy}>
+        <Button onClick={submit} disabled={busy} className="themed-button">
           {mode === 'signin' ? 'Belépés' : 'Regisztráció'}
         </Button>
-        <Button size="small" onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')} disabled={busy}>
+        <Button
+          size="small"
+          onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
+          disabled={busy}
+          className="themed-button"
+        >
           {mode === 'signin' ? 'Nincs fiókod? Regisztrálj' : 'Már van fiókod? Lépj be'}
         </Button>
-        <Button size="small" onClick={onReset} disabled={busy}>Elfelejtett jelszó</Button>
+        <Button size="small" onClick={onReset} disabled={busy} className="themed-button">
+          Elfelejtett jelszó
+        </Button>
       </div>
       {msg && <div aria-live="polite">{msg}</div>}
     </div>

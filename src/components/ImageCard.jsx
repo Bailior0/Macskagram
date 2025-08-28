@@ -37,7 +37,6 @@ export default function ImageCard({ item }) {
     const prevLiked = liked;
     const prevCount = count;
 
-    // optimista UI
     setLiked(!prevLiked);
     setCount(prevLiked ? Math.max(prevCount - 1, 0) : prevCount + 1);
 
@@ -56,7 +55,6 @@ export default function ImageCard({ item }) {
     if (!window.confirm('Biztosan törölni szeretnéd ezt a képet?')) return;
     try {
       await deleteImage(item.id, item.storagePath);
-      // esemény az ImageGrid felé
       window.dispatchEvent(new CustomEvent('image:deleted', { detail: item.id }));
     } catch (e) {
       console.error('Törlés hiba', e);
@@ -71,12 +69,21 @@ export default function ImageCard({ item }) {
       borderRadius: 12,
       overflow: 'hidden',
       boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
-      background: 'linear-gradient(180deg,#0b0b0b,#020202)',
-      color: '#fff',
+      background: 'var(--header-bg)',
+      color: 'var(--text-color)',
       marginBottom: 20,
       display: 'block'
     }}>
-      <div style={{ width: '100%', height: 320, backgroundColor: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div
+        style={{
+          width: '100%',
+          height: 320,
+          backgroundColor: 'var(--bg-color)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
         <img
           src={item.url}
           alt={caption}
@@ -84,7 +91,7 @@ export default function ImageCard({ item }) {
         />
       </div>
 
-      <div style={{ padding: 12, fontSize: 18, color: '#fff' }}>{caption}</div>
+      <div style={{ padding: 12, fontSize: 18, color: 'var(--text-color)' }}>{caption}</div>
 
       <div style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -94,18 +101,19 @@ export default function ImageCard({ item }) {
             disabled={busy}
             size="small"
             aria-label={liked ? 'Tetszik visszavonása' : 'Tetszik'}
+            className="themed-button"
           >
             {liked ? '❤️' : '🤍'} {count}
           </Button>
         </div>
 
-        {/* csak a saját képnél jelenjen meg a törlés ikon */}
         {uid === item.ownerId && (
           <Button
             icon="trash"
             onClick={onDelete}
             size="small"
             aria-label="Kép törlése"
+            className="themed-button"
           />
         )}
       </div>

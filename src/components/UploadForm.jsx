@@ -49,12 +49,12 @@ export default function UploadForm(props) {
       />
 
       <div style={{display:'flex', gap:12, alignItems:'center', flexWrap:'wrap'}}>
-        <Button onClick={onPickFile} disabled={busy}>Kép kiválasztása</Button>
+        <Button onClick={onPickFile} disabled={busy} className="themed-button">Kép kiválasztása</Button>
         <span style={{opacity:.8}}>{file ? file.name : '— nincs fájl kiválasztva —'}</span>
       </div>
 
       <Input placeholder="Felirat (opcionális)" value={caption} onChange={({value}) => setCaption(value)} />
-      <Button disabled={busy} onClick={onSubmit}>Feltöltés</Button>
+      <Button disabled={busy} onClick={onSubmit} className="themed-button">Feltöltés</Button>
       {msg && <div aria-live="polite">{msg}</div>}
     </div>
   );
