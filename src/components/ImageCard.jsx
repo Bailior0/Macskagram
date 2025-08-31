@@ -113,7 +113,7 @@ export default function ImageCard({ item }) {
             onClick={onDelete}
             size="small"
             aria-label="Kép törlése"
-            className="themed-button"
+            className="themed-button danger-button"
           />
         )}
       </div>

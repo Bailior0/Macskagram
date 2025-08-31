@@ -1,5 +1,4 @@
 :root { 
-  
   --text-color: #fff;
   --header-bg: #111;
   --header-text: #fff;
@@ -88,6 +87,26 @@ p, label {
   opacity: 0.6 !important;
   background-color: #9e9e9e !important;
   color: #fff !important;
+}
+
+/* --- EXTRA: elsődleges (Küldés) és veszélyes (Törlés) gomb --- */
+.primary-button {
+  background-color: var(--accent-color) !important;
+  color: #fff !important;
+}
+
+.danger-button {
+  background-color: #d32f2f !important; /* piros mindig */
+  color: #fff !important;
+}
+
+.danger-button:active {
+  background-color: #b71c1c !important;
+}
+
+.danger-button:disabled {
+  background-color: #8e8e8e !important;
+  opacity: 0.6 !important;
 }
 
 /* Scrollbar (opcionális) */

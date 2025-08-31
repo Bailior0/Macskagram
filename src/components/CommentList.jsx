@@ -99,7 +99,7 @@ export default function CommentList({imageId}) {
           onClick={onSubmit}
           disabled={busy || !text.trim()}
           style={{minWidth:120}}
-          className="themed-button"
+          className="themed-button primary-button"
         >
           Küldés
         </Button>
