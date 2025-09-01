@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Button from '@enact/sandstone/Button';
 import { auth } from '../services/firebase';
 import { hasUserLiked, toggleLike } from '../services/likes';
-import { deleteImage } from '../services/images';
+import { deleteMedia } from '../services/images';
 import CommentList from './CommentList';
 
 export default function ImageCard({ item }) {
@@ -52,17 +52,17 @@ export default function ImageCard({ item }) {
   };
 
   const onDelete = async () => {
-    if (!window.confirm('Biztosan törölni szeretnéd ezt a képet?')) return;
+    if (!window.confirm('Biztosan törölni szeretnéd ezt a fájlt?')) return;
     try {
-      await deleteImage(item.id, item.storagePath);
-      window.dispatchEvent(new CustomEvent('image:deleted', { detail: item.id }));
+      await deleteMedia(item.id, item.storagePath);
+      window.dispatchEvent(new CustomEvent('media:deleted', { detail: item.id }));
     } catch (e) {
       console.error('Törlés hiba', e);
-      alert('Nem sikerült törölni a képet.');
+      alert('Nem sikerült törölni a fájlt.');
     }
   };
 
-  const caption = useMemo(() => item.caption || 'cica', [item.caption]);
+  const caption = useMemo(() => item.caption || '', [item.caption]);
 
   return (
     <div style={{
@@ -84,11 +84,19 @@ export default function ImageCard({ item }) {
           justifyContent: 'center'
         }}
       >
-        <img
-          src={item.url}
-          alt={caption}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-        />
+        {item.type === 'video' ? (
+          <video
+            src={item.url}
+            controls
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        ) : (
+          <img
+            src={item.url}
+            alt={caption}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        )}
       </div>
 
       <div style={{ padding: 12, fontSize: 18, color: 'var(--text-color)' }}>{caption}</div>
@@ -112,7 +120,7 @@ export default function ImageCard({ item }) {
             icon="trash"
             onClick={onDelete}
             size="small"
-            aria-label="Kép törlése"
+            aria-label="Fájl törlése"
             className="themed-button danger-button"
           />
         )}

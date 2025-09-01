@@ -1,7 +1,7 @@
 import {useRef, useState} from 'react';
 import Button from '@enact/sandstone/Button';
 import Input from '@enact/sandstone/Input';
-import {uploadImage} from '../services/images';
+import {uploadMedia} from '../services/images';
 
 export default function UploadForm(props) {
   const [file, setFile] = useState(null);
@@ -17,12 +17,11 @@ export default function UploadForm(props) {
   };
 
   const onSubmit = async () => {
-    if (!file) return setMsg('Válassz egy képet!');
+    if (!file) return setMsg('Válassz egy képet vagy videót!');
     try {
       setBusy(true); setMsg('');
-      const doc = await uploadImage(file, caption);
-      // esemény a listának
-      window.dispatchEvent(new CustomEvent('image:uploaded', {detail: doc}));
+      const doc = await uploadMedia(file, caption);
+      window.dispatchEvent(new CustomEvent('media:uploaded', {detail: doc}));
 
       setFile(null); setCaption('');
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -36,20 +35,19 @@ export default function UploadForm(props) {
 
   return (
     <div {...props} style={{display: 'grid', gap: 12, alignItems: 'center'}}>
-      <label style={{fontSize: 18}}>Macskafotó feltöltése</label>
+      <label style={{fontSize: 18}}>Fotó vagy videó feltöltése</label>
 
-      {/* Rejtett input – TV-n gombbal nyílik */}
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/*,video/*"
         onChange={onFile}
         style={{position: 'absolute', opacity: 0, width: 1, height: 1, pointerEvents: 'none'}}
         tabIndex={-1}
       />
 
       <div style={{display:'flex', gap:12, alignItems:'center', flexWrap:'wrap'}}>
-        <Button onClick={onPickFile} disabled={busy} className="themed-button">Kép kiválasztása</Button>
+        <Button onClick={onPickFile} disabled={busy} className="themed-button">Fájl kiválasztása</Button>
         <span style={{opacity:.8}}>{file ? file.name : '— nincs fájl kiválasztva —'}</span>
       </div>
 

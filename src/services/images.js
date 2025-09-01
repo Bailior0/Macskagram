@@ -7,11 +7,14 @@ import {ref, uploadBytesResumable, getDownloadURL, deleteObject} from 'firebase/
 
 const PAGE_SIZE = 12;
 
-export async function uploadImage(file, caption = '') {
+export async function uploadMedia(file, caption = '') {
   const user = auth.currentUser;
   if (!user) throw new Error('Nincs bejelentkezve (auth).');
 
-  const storagePath = `images/${user.uid}/${Date.now()}_${file.name}`;
+  const isVideo = file.type.startsWith('video/');
+  const folder = isVideo ? 'videos' : 'images';
+
+  const storagePath = `${folder}/${user.uid}/${Date.now()}_${file.name}`;
   const storageRef = ref(storage, storagePath);
 
   const task = uploadBytesResumable(storageRef, file, {contentType: file.type});
@@ -21,22 +24,32 @@ export async function uploadImage(file, caption = '') {
 
   const url = await getDownloadURL(storageRef);
 
-  const docRef = await addDoc(collection(db, 'images'), {
+  const docRef = await addDoc(collection(db, 'media'), {
     url,
     caption,
     ownerId: user.uid,
     createdAt: Date.now(),
     storagePath,
-    likesCount: 0
+    likesCount: 0,
+    type: isVideo ? 'video' : 'image'
   });
 
-  return {id: docRef.id, url, caption, ownerId: user.uid, createdAt: Date.now(), storagePath, likesCount: 0};
+  return {
+    id: docRef.id,
+    url,
+    caption,
+    ownerId: user.uid,
+    createdAt: Date.now(),
+    storagePath,
+    likesCount: 0,
+    type: isVideo ? 'video' : 'image'
+  };
 }
 
-export async function fetchImagesPage({after = null, pageSize = PAGE_SIZE} = {}) {
-  let q = query(collection(db, 'images'), orderBy('createdAt', 'desc'), limit(pageSize));
+export async function fetchMediaPage({after = null, pageSize = PAGE_SIZE} = {}) {
+  let q = query(collection(db, 'media'), orderBy('createdAt', 'desc'), limit(pageSize));
   if (after) {
-    q = query(collection(db, 'images'), orderBy('createdAt', 'desc'), startAfter(after), limit(pageSize));
+    q = query(collection(db, 'media'), orderBy('createdAt', 'desc'), startAfter(after), limit(pageSize));
   }
   const snap = await getDocs(q);
   const items = [];
@@ -45,15 +58,12 @@ export async function fetchImagesPage({after = null, pageSize = PAGE_SIZE} = {})
   return {items, lastDoc: last};
 }
 
-export async function deleteImage(id, storagePath) {
+export async function deleteMedia(id, storagePath) {
   const user = auth.currentUser;
   if (!user) throw new Error('Nincs bejelentkezve.');
   if (!id || !storagePath) throw new Error('Hiányzó paraméterek.');
 
-  // törlés Firestore-ból
-  await deleteDoc(doc(db, 'images', id));
-
-  // törlés Storage-ból
+  await deleteDoc(doc(db, 'media', id));
   const storageRef = ref(storage, storagePath);
   await deleteObject(storageRef);
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Button from '@enact/sandstone/Button';
 import Spinner from '@enact/sandstone/Spinner';
-import { fetchImagesPage } from '../services/images';
+import { fetchMediaPage } from '../services/images';
 import ImageCard from './ImageCard';
 
 export default function ImageGrid(props) {
@@ -12,7 +12,7 @@ export default function ImageGrid(props) {
   const loadPage = useCallback(async (after = null, replace = false) => {
     setLoading(true);
     try {
-      const { items: page, lastDoc } = await fetchImagesPage({ after });
+      const { items: page, lastDoc } = await fetchMediaPage({ after });
       setItems(prev => replace ? page : [...prev, ...page]);
       setCursor(lastDoc);
     } finally {
@@ -37,8 +37,8 @@ export default function ImageGrid(props) {
       const doc = e.detail;
       setItems(prev => (prev.some(p => p.id === doc.id) ? prev : [doc, ...prev]));
     };
-    window.addEventListener('image:uploaded', handler);
-    return () => window.removeEventListener('image:uploaded', handler);
+    window.addEventListener('media:uploaded', handler);
+    return () => window.removeEventListener('media:uploaded', handler);
   }, []);
 
   useEffect(() => {
@@ -46,8 +46,8 @@ export default function ImageGrid(props) {
       const deletedId = e.detail;
       setItems(prev => prev.filter(p => p.id !== deletedId));
     };
-    window.addEventListener('image:deleted', handler);
-    return () => window.removeEventListener('image:deleted', handler);
+    window.addEventListener('media:deleted', handler);
+    return () => window.removeEventListener('media:deleted', handler);
   }, []);
 
   return (
@@ -73,7 +73,7 @@ export default function ImageGrid(props) {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
-        {cursor && !loading && <Button onClick={loadMore} className="themed-button">További képek</Button>}
+        {cursor && !loading && <Button onClick={loadMore} className="themed-button">Továbbiak</Button>}
         {loading && <Spinner />}
       </div>
     </div>
