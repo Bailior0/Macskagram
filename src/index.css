@@ -18,7 +18,7 @@
   --text-color: #fff;
   --header-bg: #111;
   --header-text: #fff;
-  --accent-color: #6f6f6f; /* sötét módban SZÜRKE (nem piros) */
+  --accent-color: #6f6f6f; /* sötét módban SZÜRKE */
 }
 
 html, body, #root,
@@ -32,7 +32,7 @@ html, body, #root,
   padding: 0;
   height: 100%;
   min-height: 100vh;
-  background-color: var(--bg-color) !important;  /* görgetés alatt is egységes háttér */
+  background-color: var(--bg-color) !important;
   color: var(--text-color) !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   transition: background 0.3s ease, color 0.3s ease;
@@ -40,13 +40,11 @@ html, body, #root,
 
 * { box-sizing: border-box; }
 
-/* --- SZÖVEGEK: a plain h1–h6 is váltson (AuthForm h2: "Bejelentkezés") --- */
 h1, h2, h3, h4, h5, h6,
 p, label {
   color: var(--text-color) !important;
 }
 
-/* Sandstone komponensek szövegei is vegyék át a témaszínt */
 .enact-sandstone-BodyText,
 .enact-sandstone-Heading,
 .enact-sandstone-Button .ButtonText,
@@ -58,7 +56,6 @@ p, label {
   color: var(--text-color) !important;
 }
 
-/* --- GOMBOK: tematizált háttér + kisebb méret --- */
 .themed-button,
 .themed-button::before,
 .themed-button:focus,
@@ -68,7 +65,6 @@ p, label {
   color: #fff !important;
   border-radius: 10px !important;
 
-  /* méret finomhangolás - kisebb, mint az előző nagy méret */
   padding: 0.4em 0.9em !important;
   font-size: 0.95rem !important;
   line-height: 1.2 !important;
@@ -76,7 +72,7 @@ p, label {
 
 .themed-button .ButtonText {
   color: #fff !important;
-  font-size: inherit !important; /* igazodjon a fenti 0.95rem-hez */
+  font-size: inherit !important; 
 }
 
 .themed-button:active {
@@ -89,14 +85,13 @@ p, label {
   color: #fff !important;
 }
 
-/* --- EXTRA: elsődleges (Küldés) és veszélyes (Törlés) gomb --- */
 .primary-button {
   background-color: var(--accent-color) !important;
   color: #fff !important;
 }
 
 .danger-button {
-  background-color: #d32f2f !important; /* piros mindig */
+  background-color: #d32f2f !important; 
   color: #fff !important;
 }
 
@@ -109,7 +104,13 @@ p, label {
   opacity: 0.6 !important;
 }
 
-/* Scrollbar (opcionális) */
+.focusable-video.spotlight {
+  outline: 5px solid yellow !important;
+  outline-offset: -5px;
+  border-radius: 12px;
+  box-shadow: 0 0 25px yellow !important;
+}
+
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb {
   background: rgba(128,128,128,0.3);

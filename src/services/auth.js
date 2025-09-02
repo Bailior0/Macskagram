@@ -11,7 +11,6 @@ import {
 } from 'firebase/auth';
 
 export async function ensureAuthPersistence() {
-  // TV-n előfordulhat, hogy local storage nem elérhető guest módban.
   try {
     await setPersistence(auth, browserLocalPersistence);
   } catch (e) {
@@ -21,7 +20,6 @@ export async function ensureAuthPersistence() {
 }
 
 export function watchAuth(callback) {
-  // Visszaad egy unsubscribe függvényt
   return onAuthStateChanged(auth, callback);
 }
 

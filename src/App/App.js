@@ -7,7 +7,6 @@ import {AuthProvider} from '../components/AuthProvider';
 import AuthGate from '../components/AuthGate';
 import HeaderBar from '../components/HeaderBar';
 
-// Opcionális: Tizen "Back" gomb
 if (typeof window !== 'undefined' && window.tizen) {
   document.addEventListener('tizenhwkey', (e) => {
     if (e.keyName === 'back') {
@@ -27,7 +26,6 @@ const AppBase = kind({
       {...props}
       style={{
         padding: 24,
-        /* háttér a téma változóból, hogy tényleg váltson */
         background: 'var(--bg-color)',
         minHeight: '100vh'
       }}
@@ -50,7 +48,6 @@ const AppBase = kind({
 
 const Skinned = ThemeDecorator(AppBase);
 
-// Providerrel burkolt export (így a ThemeDecorator megmarad)
 export default function App(props) {
   return (
     <AuthProvider>

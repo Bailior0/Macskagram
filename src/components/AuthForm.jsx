@@ -14,7 +14,7 @@ const ERRORS_HU = {
 const msgFromErr = (e) => ERRORS_HU[e?.code] || e?.message || 'Ismeretlen hiba';
 
 export default function AuthForm() {
-  const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
+  const [mode, setMode] = useState('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -53,8 +53,24 @@ export default function AuthForm() {
   return (
     <div style={{display: 'grid', gap: 16, maxWidth: 560}}>
       <h2 style={{margin: 0}}>{mode === 'signin' ? 'Bejelentkezés' : 'Regisztráció'}</h2>
-      <Input placeholder="Email" type="email" value={email} onChange={({value}) => setEmail(value)} />
-      <Input placeholder="Jelszó" type="password" value={password} onChange={({value}) => setPassword(value)} />
+
+      {}
+      <Input
+        placeholder="Email"
+        type="text"
+        inputMode="email"
+        autoComplete="email"
+        value={email}
+        onChange={({value}) => setEmail(value)}
+      />
+
+      <Input
+        placeholder="Jelszó"
+        type="password"
+        value={password}
+        onChange={({value}) => setPassword(value)}
+      />
+
       <div style={{display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap'}}>
         <Button onClick={submit} disabled={busy} className="themed-button">
           {mode === 'signin' ? 'Belépés' : 'Regisztráció'}
@@ -71,6 +87,7 @@ export default function AuthForm() {
           Elfelejtett jelszó
         </Button>
       </div>
+
       {msg && <div aria-live="polite">{msg}</div>}
     </div>
   );

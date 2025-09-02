@@ -1,6 +1,6 @@
 import {auth, db} from './firebase';
 import {
-  addDoc, collection, onSnapshot, orderBy, query, serverTimestamp
+  addDoc, collection, onSnapshot, orderBy, query
 } from 'firebase/firestore';
 
 export async function addComment(mediaId, text) {

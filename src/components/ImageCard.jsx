@@ -1,9 +1,43 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import Button from '@enact/sandstone/Button';
+import {Spottable} from '@enact/spotlight/Spottable';
 import { auth } from '../services/firebase';
 import { hasUserLiked, toggleLike } from '../services/likes';
 import { deleteMedia } from '../services/images';
 import CommentList from './CommentList';
+
+const FocusableVideoBase = (props) => {
+  const videoRef = useRef(null);
+
+  const handleKeyDown = (ev) => {
+    if (ev.keyCode === 13 && videoRef.current) {
+      if (videoRef.current.paused) {
+        videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  };
+
+  return (
+    <div
+      {...props}
+      onKeyDown={handleKeyDown}
+      className={`focusable-video ${props.className || ''}`}
+      style={{width: '100%', height: '100%'}}
+    >
+      <video
+        ref={videoRef}
+        src={props.src}
+        controls
+        tabIndex={-1}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
+    </div>
+  );
+};
+
+const FocusableVideo = Spottable(FocusableVideoBase);
 
 export default function ImageCard({ item }) {
   const user = auth.currentUser;
@@ -85,11 +119,7 @@ export default function ImageCard({ item }) {
         }}
       >
         {item.type === 'video' ? (
-          <video
-            src={item.url}
-            controls
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-          />
+          <FocusableVideo src={item.url} />
         ) : (
           <img
             src={item.url}

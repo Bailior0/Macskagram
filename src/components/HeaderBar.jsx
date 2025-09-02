@@ -4,9 +4,8 @@ import {useAuth} from './AuthProvider';
 
 export default function HeaderBar() {
   const {user, signOut} = useAuth();
-  const [theme, setTheme] = useState('dark'); // alap night mód
+  const [theme, setTheme] = useState('dark');
 
-  // body class beállítása theme alapján
   useEffect(() => {
     document.body.classList.remove('light-theme', 'dark-theme');
     document.body.classList.add(theme === 'light' ? 'light-theme' : 'dark-theme');
